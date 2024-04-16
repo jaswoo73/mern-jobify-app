@@ -16,7 +16,7 @@ export const action =
     }
     try {
       await customFetch.patch("/users/update-user", formData);
-      queryClient.invalidateQueries("user");
+      queryClient.invalidateQueries(["user"]);
       toast.success("Profile updated successfully");
     } catch (error) {
       toast.error(error?.response?.data?.msg);
@@ -27,9 +27,18 @@ export const action =
 const Profile = () => {
   const { user } = useOutletContext();
   const { name, lastName, email, location } = user;
+
+  // This key is used to force a Form component re-mount so that the default value is up to date after edit
+  const formKey = `${name}-${lastName}-${email}-${location}`;
+
   return (
     <Wrapper>
-      <Form method="post" className="form" encType="multipart/form-data">
+      <Form
+        key={formKey}
+        method="post"
+        className="form"
+        encType="multipart/form-data"
+      >
         <h4 className="form-title">profile</h4>
         <div className="form-center">
           <div className="form-row">
